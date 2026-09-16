@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   IHI Design System Tokens
+   Added by Dev B — Phase 2 Design System
+   DO NOT REMOVE: shared across all screens
+   ============================================ */
+
+/* --- Daylight register (default / light) --- */
+:root {
+  --surface-bg: #f8f9fb;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --border-default: #e2e5ea;
+  --border-strong: #c8ccd4;
+  --text-primary: #111318;
+  --text-secondary: #525866;
+  --text-muted: #8b90a0;
+  --accent: #6e56cf;
+  --accent-hover: #5b45b5;
+  --accent-subtle: rgba(110, 86, 207, 0.08);
+  --accent-text: #6e56cf;
+  --destructive: #dc2626;
+  --destructive-hover: #b91c1c;
+  --destructive-subtle: rgba(220, 38, 38, 0.06);
+
+  /* Signal Light */
+  --signal-good: #16a34a;
+  --signal-good-bg: rgba(22, 163, 74, 0.1);
+  --signal-attention: #d97706;
+  --signal-attention-bg: rgba(217, 119, 6, 0.1);
+  --signal-critical: #dc2626;
+  --signal-critical-bg: rgba(220, 38, 38, 0.08);
+}
+
+/* --- Tower register (dark) ---
+   Activate by adding data-register="tower" to any ancestor element.
+   Example: <body data-register="tower"> or <main data-register="tower"> */
+[data-register="tower"] {
+  --surface-bg: #0c0e14;
+  --surface: #151821;
+  --surface-raised: #1c2030;
+  --border-default: #262a38;
+  --border-strong: #3a3f52;
+  --text-primary: #e4e6ec;
+  --text-secondary: #9198a8;
+  --text-muted: #5e6478;
+  --accent: #8b7cf6;
+  --accent-hover: #a094f8;
+  --accent-subtle: rgba(139, 124, 246, 0.1);
+  --accent-text: #a99cf8;
+  --destructive: #f87171;
+  --destructive-hover: #fca5a5;
+  --destructive-subtle: rgba(248, 113, 113, 0.1);
+
+  --signal-good: #4ade80;
+  --signal-good-bg: rgba(74, 222, 128, 0.12);
+  --signal-attention: #fbbf24;
+  --signal-attention-bg: rgba(251, 191, 36, 0.12);
+  --signal-critical: #f87171;
+  --signal-critical-bg: rgba(248, 113, 113, 0.1);
+}
+
+/* --- Spinner animation (respects reduced motion) --- */
+@keyframes ihi-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @keyframes ihi-spin {
+    to { transform: none; }
+  }
+}
+
+/* IHI design system — additive, namespaced tokens. */
+:root {
+  --ihi-brand-50: #eef2ff; --ihi-brand-100: #e0e7ff; --ihi-brand-200: #c7d2fe;
+  --ihi-brand-300: #a5b4fc; --ihi-brand-400: #818cf8; --ihi-brand-500: #6366f1;
+  --ihi-brand-600: #4f46e5; --ihi-brand-700: #4338ca; --ihi-brand-800: #3730a3;
+  --ihi-surface-0: #ffffff; --ihi-surface-25: #fdfcfb; --ihi-surface-50: #fafaf9;
+  --ihi-surface-100: #f5f5f4; --ihi-surface-200: #e7e5e4; --ihi-surface-300: #d6d3d1;
+  --ihi-surface-400: #a8a29e; --ihi-surface-500: #78716c; --ihi-surface-600: #57534e;
+  --ihi-surface-700: #44403c; --ihi-surface-800: #292524; --ihi-surface-900: #1c1917; --ihi-surface-950: #0c0a09;
+  --ihi-signal-go: #10b981; --ihi-signal-go-bg: #ecfdf5;
+  --ihi-signal-warn: #f59e0b; --ihi-signal-warn-bg: #fffbeb;
+  --ihi-signal-stop: #ef4444; --ihi-signal-stop-bg: #fef2f2;
+  --ihi-ai-high: #818cf8; --ihi-ai-high-bg: #eef2ff;
+  --ihi-ai-moderate: #94a3b8; --ihi-ai-moderate-bg: #f1f5f9;
+  --font-display: "Inter", system-ui, -apple-system, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", monospace;
+  --radius-sm: 6px; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); --dur-fast: 150ms; --dur-normal: 250ms; --dur-slow: 400ms;
+}
+
+[data-register="tower"] {
+  --ihi-surface-0: #0b0e1a; --ihi-surface-25: #0e1221; --ihi-surface-50: #121629;
+  --ihi-surface-100: #181d35; --ihi-surface-200: #222845; --ihi-surface-300: #2e365a;
+  --ihi-surface-400: #4a5280; --ihi-surface-500: #7b83a6; --ihi-surface-600: #a0a7c4;
+  --ihi-surface-700: #c4c9de; --ihi-surface-800: #e2e4ed; --ihi-surface-900: #f1f0ed; --ihi-surface-950: #faf9f7;
+  --ihi-signal-go: #34d399; --ihi-signal-go-bg: #052e1c;
+  --ihi-signal-warn: #fbbf24; --ihi-signal-warn-bg: #2a1f04;
+  --ihi-signal-stop: #fb7185; --ihi-signal-stop-bg: #2a0610;
+  --ihi-ai-high-bg: #1e1b4b; --ihi-ai-moderate-bg: #1e293b;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ihi-reveal { opacity: 0; transform: translateY(16px); transition: opacity var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out); }
+  .ihi-reveal.is-visible { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) { .ihi-reveal { opacity: 1; transform: none; } }
+*:focus-visible { outline: 2px solid var(--ihi-brand-500); outline-offset: 2px; border-radius: var(--radius-sm); }
