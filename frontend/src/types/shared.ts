@@ -244,3 +244,37 @@ export interface AssignedSubmissionItem {
   score?: Score | null;
   has_pending_correction?: boolean;
 }
+
+// ── Results & Audit (Phase 6) ───────────────────────────────
+
+export interface SubmissionResultItem {
+  submission_id: string;
+  project_title: string;
+  team_name: string;
+  score_count: number;
+  final_average_score: number;
+  rank: number;
+}
+
+export interface ResultsSummary {
+  event_id: string;
+  event_name: string;
+  event_status: EventStatus | string;
+  total_submissions: number;
+  total_scored_submissions: number;
+  completion_percentage: number;
+  /** Server gate: every submission has ≥ 1 score */
+  is_publishable: boolean;
+  rankings: SubmissionResultItem[];
+}
+
+export interface AuditLogItem {
+  id: string;
+  event_id: string | null;
+  actor_id: string | null;
+  action: string;
+  entity_type: string;
+  entity_id: string | null;
+  payload: Record<string, unknown>;
+  created_at: string;
+}
