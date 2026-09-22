@@ -198,3 +198,49 @@ export interface JoinTeamResult {
   member_count?: number;
   team_status?: TeamStatus;
 }
+
+// ── Scoring & Corrections (Phase 5) ─────────────────────────
+
+export interface CriterionScoreInput {
+  criterion_id: string;
+  title: string;
+  score: number;
+  max_score: number;
+  weight: number;
+}
+
+export interface Score {
+  id: string;
+  event_id: string;
+  submission_id: string;
+  judge_user_id: string;
+  criteria_scores: CriterionScoreInput[];
+  total_score: number;
+  corrects_score_id?: string | null;
+  created_at: string;
+}
+
+export interface CorrectionRequest {
+  id: string;
+  event_id: string;
+  submission_id: string;
+  judge_user_id: string;
+  original_score_id: string;
+  proposed_criteria_scores: CriterionScoreInput[];
+  proposed_total_score: number;
+  reason: string;
+  status: "pending_organizer_review" | "approved" | "rejected";
+  created_at: string;
+}
+
+export interface AssignedSubmissionItem {
+  assignment_id: string;
+  submission_id: string;
+  event_id: string;
+  status: "assigned" | "in_progress" | "completed";
+  team_name?: string;
+  project_title?: string;
+  is_scored: boolean;
+  score?: Score | null;
+  has_pending_correction?: boolean;
+}
