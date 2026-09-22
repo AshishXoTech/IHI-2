@@ -3,16 +3,12 @@
  * ─────────────────────────────────────────────────────────────
  * RULE: Any change to this file is a 2-minute conversation with
  * the other developer. Do not edit solo.
- *
- * Dev B (Experience) owns: Team*, SoloParticipant, TeamChat*
- * Dev A (Trust/Data) owns: Event, Registration, Rubric, Score,
- *                          Auth/role types — add below when ready.
  * ─────────────────────────────────────────────────────────────
  */
 
-// ── Identity (minimal — Dev A will expand) ──────────────────
+// ── Identity ────────────────────────────────────────────────
 
-export type UserRole = "organizer" | "participant" | "judge";
+export type UserRole = "organizer" | "participant" | "judge" | "admin";
 
 export interface UserProfile {
   id: string;
@@ -21,7 +17,7 @@ export interface UserProfile {
   avatar_url?: string | null;
 }
 
-// ── Event lifecycle (both need this — lock early) ───────────
+// ── Event Lifecycle ─────────────────────────────────────────
 
 export type EventStatus =
   | "draft"
@@ -41,12 +37,15 @@ export interface Event {
   description?: string | null;
   status: EventStatus;
   max_team_size: number;
+  max_participants?: number | null;
+  submission_deadline?: string | null;
+  registration_fields?: any;
   starts_at?: string | null;
   ends_at?: string | null;
   created_at: string;
 }
 
-// ── Registration (Dev A owns the module; shape needed by Teams) ─
+// ── Registration ────────────────────────────────────────────
 
 export type RegistrationStatus =
   | "pending"
@@ -65,7 +64,7 @@ export interface Registration {
   created_at: string;
 }
 
-// ── Team Formation (Dev B owns) ─────────────────────────────
+// ── Team Formation ──────────────────────────────────────────
 
 export type TeamStatus = "forming" | "full" | "locked";
 
@@ -79,7 +78,7 @@ export interface Team {
   max_members: number;
   status: TeamStatus;
   lead_user_id: string;
-  member_count: number; // denormalized for list views; source of truth is team_members count
+  member_count: number;
   created_at: string;
 }
 
@@ -133,7 +132,44 @@ export interface SoloParticipant {
   looking_since: string;
 }
 
-// ── API response envelopes ──────────────────────────────────
+// ── Judging & Scoring (Phase 4) ─────────────────────────────
+
+export interface RubricCriterion {
+  id?: string;
+  rubric_id?: string;
+  title: string;
+  description?: string | null;
+  max_score: number;
+  weight: number;
+  order_index?: number;
+}
+
+export interface Rubric {
+  id: string;
+  event_id: string;
+  title: string;
+  criteria: RubricCriterion[];
+  created_at: string;
+}
+
+export interface JudgeInvite {
+  id: string;
+  event_id: string;
+  email: string;
+  status: "pending" | "accepted" | "revoked";
+  created_at: string;
+}
+
+export interface JudgeAssignment {
+  id: string;
+  event_id: string;
+  judge_user_id: string;
+  submission_id: string | null;
+  status: "assigned" | "in_progress" | "completed";
+  created_at: string;
+}
+
+// ── API Envelopes ───────────────────────────────────────────
 
 export interface ApiSuccess<T> {
   ok: true;
@@ -155,8 +191,6 @@ export interface ApiError {
 }
 
 export type ApiResult<T> = ApiSuccess<T> | ApiError;
-
-// ── Join RPC result (matches Postgres join_team function) ───
 
 export interface JoinTeamResult {
   success: boolean;
