@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button, Card, StatusBadge } from "@/components/ui";
+import { createClient } from "@/lib/supabase/client";
 import type { ApiResult, CriterionScoreInput, RubricCriterion, Score } from "@/types/shared";
 
 const DEFAULT_FALLBACK_CRITERIA: RubricCriterion[] = [
@@ -20,6 +21,7 @@ export default function JudgeScoringScreen() {
 
   const submissionId = params.submissionId as string;
   const eventId = searchParams.get("eventId") || "";
+  const supabase = useMemo(() => createClient(), []);
 
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -54,12 +56,28 @@ export default function JudgeScoringScreen() {
         }
       }
 
+      // Load dynamic submission details from Postgres
+      const { data: subData, error: submissionError } = await supabase
+        .from("submissions")
+        .select("id, fields, team_id, teams(name)")
+        .eq("id", submissionId)
+        .single();
+
+      if (submissionError) {
+        throw submissionError;
+      }
+
+      if (!subData) {
+        throw new Error("Submission not found.");
+      }
+
       setSubmission({
-        id: submissionId,
-        title: matchedItem?.project_title || "Signal ZK Engine",
-        description: "Zero-knowledge identity verification platform with client-side signature engine and event-driven indexer.",
-        repo_url: "https://github.com/signal-foundry/verify",
-        demo_url: "https://verify.signalfoundry.dev",
+        id: subData.id,
+        title: subData.fields?.title || subData.fields?.project_title || "Project Submission",
+        description: subData.fields?.description || "No project description provided.",
+        repo_url: subData.fields?.repo_url || subData.fields?.repo || "N/A",
+        demo_url: subData.fields?.demo_url || subData.fields?.demo || "N/A",
+        team_name: subData.teams?.[0]?.name || "Assigned Team",
       });
 
       // 2. Load Active Rubric
@@ -86,7 +104,7 @@ export default function JudgeScoringScreen() {
     } finally {
       setLoading(false);
     }
-  }, [eventId, submissionId]);
+  }, [eventId, submissionId, supabase]);
 
   useEffect(() => {
     loadData();

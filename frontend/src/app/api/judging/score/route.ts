@@ -26,6 +26,35 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Server-time authoritative deadline gate
+    const { data: event, error: eventErr } = await supabase
+      .from("events")
+      .select("ends_at, status")
+      .eq("id", eventId)
+      .single();
+
+    if (eventErr || !event) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: eventErr?.code === "PGRST116" ? "Event not found." : "Failed to load event.",
+          code: eventErr?.code === "PGRST116" ? "not_found" : "validation",
+        } satisfies ApiResult<never>,
+        { status: eventErr?.code === "PGRST116" ? 404 : 500 }
+      );
+    }
+
+    if (event.ends_at && new Date() > new Date(event.ends_at)) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "Judging window has closed for this event. No new scores can be submitted.",
+          code: "forbidden",
+        } satisfies ApiResult<never>,
+        { status: 403 }
+      );
+    }
+
     for (const c of criteriaScores as CriterionScoreInput[]) {
       if (typeof c.score !== "number" || c.score < 0 || c.score > c.max_score) {
         return NextResponse.json(
